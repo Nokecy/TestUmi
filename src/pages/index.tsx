@@ -1,7 +1,7 @@
 import styles from './index.less';
-import {
-  createForm
-} from '@formily/core';
+import { useMemo } from 'react';
+import { Button, Input as AntInput } from 'antd';
+import { createForm, onFormInit } from '@formily/core';
 import {
   Form,
   FormGrid,
@@ -10,30 +10,91 @@ import {
   Input,
   FormButtonGroup,
   Submit,
-  Reset
+  Reset,
+  FormLayout,
+  FormDialog,
 } from '@formily/antd';
-import { useForm } from 'antd/es/form/Form';
+import { createSchemaField, Field } from '@formily/react';
+import useFormDialog from '@/useFormDialog';
+import React from 'react';
+import TestContext from '@/test';
+
+export const UserContext = React.createContext({ value: 123 });
 
 export default function IndexPage() {
-  const form = createForm();
+  const SchemaField = useMemo(
+    () =>
+      createSchemaField({
+        components: {
+          FormItem,
+          FormGrid,
+          Input,
+          Select,
+        },
+      }),
+    [],
+  );
+
+  const formProps = {
+    effects: () => {},
+  };
+  const [modal, contextHolder] = useFormDialog();
+
   return (
-    <div>
-      <h1 className={styles.title}>Page index</h1>
+    <UserContext.Provider value={{ value: 123 }}>
+      <div>
+        <h1 className={styles.title}>Page index</h1>
+        <TestContext /> <br />
+        <Button
+          type={'primary'}
+          onClick={() => {
+            let formDialog = modal.formDialog(
+              { title: 'test', width: 1200, footer: [] },
+              (confirm, cancel) => {
+                return (
+                  <>
+                    <TestContext /> <br />
+                    <FormLayout
+                      labelCol={6}
+                      wrapperCol={18}
+                      feedbackLayout={'popover'}
+                      shallow={false}
+                    >
+                      <SchemaField>
+                        <SchemaField.Void
+                          x-component={'FormGrid'}
+                          x-component-props={{
+                            maxColumns: [1, 3, 4],
+                            columnGap: 0,
+                            rowGap: 0,
+                          }}
+                        >
+                          <SchemaField.String
+                            title={'Test'}
+                            required
+                            name={'c_ID'}
+                            x-decorator="FormItem"
+                            x-component={'Input'}
+                          />
+                        </SchemaField.Void>
+                      </SchemaField>
+                    </FormLayout>
+                    <FormDialog.Footer>
+                      <Button onClick={cancel}>取消</Button>
+                      <Submit onSubmit={(values) => {}}>确定</Submit>
+                    </FormDialog.Footer>
+                  </>
+                );
+              },
+            );
 
-      <Form
-        form={form}
-        feedbackLayout={'none'}
-        layout={'horizontal'}
-        labelCol={8}
-        style={{ backgroundColor: '#fff', padding: 10, marginBottom: 8 }}
-      >
-        <FormGrid
-          rowGap={0}
-          columnGap={10}
+            formDialog.open(formProps);
+          }}
         >
-
-        </FormGrid>
-      </Form>
-    </div>
+          测试
+        </Button>
+        {contextHolder}
+      </div>
+    </UserContext.Provider>
   );
 }

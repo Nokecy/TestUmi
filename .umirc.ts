@@ -4,20 +4,24 @@ export default defineConfig({
   nodeModulesTransform: {
     type: 'none',
   },
-  routes: [
-    { path: '/', component: '@/pages/index' },
+  routes: [{ path: '/', component: '@/pages/index' }],
+  extraBabelPlugins: [
+    [
+      'babel-plugin-import',
+      { libraryName: '@formily/antd', libraryDirectory: 'lib', style: true },
+    ],
   ],
   layout: {},
   antd: {},
   dva: false,
   fastRefresh: {},
   esbuild: {},
-  mfsu: {},
+  // mfsu: {},
   webpack5: {},
   dynamicImport: {},
   locale: {
     antd: true,
-    title: true
+    title: true,
   },
   hash: true,
   // openAPI: {
