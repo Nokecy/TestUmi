@@ -18,10 +18,11 @@ import { createSchemaField, Field } from '@formily/react';
 import useFormDialog from '@/useFormDialog';
 import React from 'react';
 import TestContext from '@/test';
+import { Users } from '..';
 
 export const UserContext = React.createContext({ value: 123 });
 
-export default function IndexPage() {
+const IndexPage = (props: any) => {
   const SchemaField = useMemo(
     () =>
       createSchemaField({
@@ -97,4 +98,9 @@ export default function IndexPage() {
       </div>
     </UserContext.Provider>
   );
-}
+};
+
+IndexPage.title = 'testpage';
+IndexPage.access = Users.Default;
+
+export default IndexPage;
